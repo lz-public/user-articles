@@ -1,7 +1,10 @@
 /* global describe it before after */
 var server = require('../index');
-var assert = require('assert');
 var http = require('http');
+var request = require('request');
+var assert = require('chai').assert;
+var expect = require('chai').expect;
+// var should = require('chai').should();
 
 describe('server', function () {
   before(function () {
@@ -39,8 +42,23 @@ describe('testing server', function () {
 });
 
 describe('user API', function () {
-  it('can get data from user #1', function (done) {
-    http.get('http://localhost:8088/user/get/1', function (res) {
+  it('can add a user', function (done) {
+    var requestData = {
+      url: 'http://localhost:8088/user/add',
+      headers: { 'Authorization': 'BEARER abc', 'Content-Type': 'application/json' },
+      body: '{"name": "TestUser", "avatar": "https://testavatar.jpeg"}'
+    };
+    request.post(requestData, function (err, res, body) {
+      if (err) done(err);
+      var resultvars = JSON.parse(res.body);
+      expect(resultvars).to.have.property('name', 'TestUser');
+      expect(resultvars).to.have.property('avatar', 'https://testavatar.jpeg');
+      done();
+    });
+  });
+
+  it('can get the complete list of users', function (done) {
+    http.get('http://localhost:8088/user/get/all', function (res) {
       var data = '';
 
       res.on('data', function (chunk) {
@@ -48,7 +66,13 @@ describe('user API', function () {
       });
 
       res.on('end', function () {
-        assert.equal('{"status":"success","userId":"1"}', data);
+        var testUserItem = null;
+        JSON.parse(data).forEach(function (item) {
+          if (item.name === 'TestUser') {
+            testUserItem = item;
+          }
+        });
+        expect(testUserItem).to.have.property('name', 'TestUser');
         done();
       });
     });

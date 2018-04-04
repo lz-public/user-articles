@@ -3,6 +3,7 @@
  */
 
 var server;
+var db;
 
 // Production HTTPS setup
 // const https = require('https');
@@ -12,6 +13,7 @@ var server;
 
 // Development mode
 const http = require('http');
+const MongoClient = require('mongodb').MongoClient;
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -50,13 +52,36 @@ app.get('/stats', function (req, res) {
 app.use('/user/', userManager);
 app.use('/article/', articleManager);
 
-// server start
+// database start
+(async function () {
+  // Connection URL
+  const url = 'mongodb://localhost:27017/userarticles';
+  // Database Name
+  const dbName = 'userarticles';
+  let client;
 
-// server = https.createServer(credentials, app);
-// server.listen(443);
-server = http.createServer(app);
-server.listen(8088);
-console.log('Starting developmment mode on HTTP:8088');
+  try {
+    // Use connect method to connect to the Server
+    client = await MongoClient.connect(url);
+
+    // set the global db
+    db = client.db(dbName);
+
+    // provide the db connection to plugins
+    userManager.db = db;
+    articleManager.db = db;
+
+    // server start
+
+    // server = https.createServer(credentials, app);
+    // server.listen(443);
+    server = http.createServer(app);
+    server.listen(8088);
+    console.log('Starting UserArticles server on HTTP:8088');
+  } catch (err) {
+    console.log(err.stack);
+  }
+})();
 
 // a basic internal counter for
 function statsCounter (resource) {
