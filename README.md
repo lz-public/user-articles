@@ -1,15 +1,12 @@
 # README #
 
 This is the "User-Articles" server. 
-
-### What is this repository for? ###
-
 * This service provides a HTTP API to manage users and articles that can be posted by them
 * Under heavy development
 
-### Roadmap ###
-## Done
+## Roadmap ###
 
+### Done
 1. Project setup (npm, git, express, etc)
 2. HTTP Server creation
 3. Basic health check
@@ -17,19 +14,21 @@ This is the "User-Articles" server.
 5. Basic test with Mocha
 6. Minimal documentation
 
-## Next steps
+### Next steps
 
 * Work on models
 * Add mongoDb
 * Improve testing
 
-### Build and install
+## Build and install
 
 * Download/clone from repo 
 * npm install
-* Start the server ```sh
+* Start the server
+```sh
 node index.js
 ```
-* Test the server ```sh
+* Test the server
+```sh
 npm test
 ```
