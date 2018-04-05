@@ -80,6 +80,15 @@ Press `Ctrl` + `C` to stop the server.
 
 ## API Reference
 
+To authenticate your requests, please add the following header to any request. If the API key does not match the environment
+variable, a 401 "Not Authorized" will be returned.
+
+Example header:
+```
+Authorization: BEARER 079ffec7dd3b4e03bff515ef62925aeb
+```
+
+
 ### User API
 
 The User API allows the creation of new users, list them and get information about a single user.
