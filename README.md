@@ -1,8 +1,9 @@
-# README #
+# UserArticles Service #
 
-This is the "User-Articles" server.
-* This service provides a HTTP API to manage users and articles that can be posted by them
-* Under heavy development
+This serivice provides support for mobile apps, managing users and articles exposing a REST API.
+
+You can create users (currently, you can't make changes to them). However, you can add, update, delete and query articles. The service has been designed to be configured for different environments and has some catching logic in the article query. There is a lot we could do to improve this server. The section "Future improvements" is a small list of how it can be extend.
+
 
 ## Roadmap
 
@@ -20,20 +21,19 @@ This is the "User-Articles" server.
 11. Authentication using the API key
 12. Improve server stats and graceful shutdown
 13. Environment dependant config
-14. Improved tests (refactor)
+14. Improved tests (refactor w/separate db)
 
-### Next steps
+### Pending - Next steps
 
-* Add tests for the Users module
-* Add tests for the Articles module
-* Clean the test database before the tests start
+* Add tests for the Articles module - debugging
 
 ### Future improvements
 
 * Use Redis/PubSub to share cache between running instances (in a scaled environment)
 * Add caching and invalidate the cached records when changes are detected
-* Improve server internal stats
-
+* Improve server internal stats and logging locally or to external resources
+* Real-world operations like editing/deleting users, to be able to change a small number of properties when updating an article, etc.
+* Increase security by adding tools such as limiters and slowloris
 
 ## Build, install and run!
 
@@ -56,10 +56,9 @@ npm test
 > NOTE: The default database name for this service is `userarticles`. However, when running the test suite,
 > the database `userarticle-test` is used. Please see the config options below.
 
-
 ## Config options
 The current implementation can be configured and is environment-dependent. Each config file is located in the server's folder
-and is named `config-_environment_.json` . The options are:
+and is named `config-*environment*.json` . The options are:
 
 ```
 {

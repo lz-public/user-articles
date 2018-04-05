@@ -97,6 +97,11 @@ const articleHandlers = {
     var tags = articleHelpers.articleTagParser(req.params.tags);
     var searchCondition = {};
 
+    // Tag sorting is a good idea, when adding query caching, since the result of requesting "tag1,tag2" is
+    // equal than the result of "tag2,tag1". Responses are similar, but querys are different. Sorting the tags
+    // causes all similar request to be responded with the same cache entry.
+    // tags.sort();
+
     // build a complete search condition
     // the shortcut { tags: tag } can't find documents if arrays don't match exactly
     if (tags.length > 1) {
