@@ -4,7 +4,7 @@
   "description": "A small server to store and retrieve articles",
   "main": "index.js",
   "scripts": {
-    "test": "semistandard && ./node_modules/mocha/bin/mocha --exit",
+    "test": "export UA_ENVIRONMENT=test && semistandard && ./node_modules/mocha/bin/mocha --exit",
     "lintfix": "semistandard --fix"
   },
   "keywords": [

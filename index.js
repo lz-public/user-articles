@@ -85,7 +85,7 @@ app.use('/article/', articleManager);
     // server.listen(443);
     server = http.createServer(app);
     server.listen(config.serverPort);
-    console.log('Starting UserArticles server on HTTP:' + config.serverPort);
+    console.log('Starting UserArticles server (' + environment + ' environment) on HTTP:' + config.serverPort);
   } catch (err) {
     console.log(err.stack);
   }
