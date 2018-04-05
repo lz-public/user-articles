@@ -4,7 +4,7 @@ var http = require('http');
 var request = require('request');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
-// var should = require('chai').should();
+var apiKey = process.env.UA_API_KEY;
 
 describe('server', function () {
   before(function () {
@@ -45,7 +45,7 @@ describe('user API', function () {
   it('can add a user', function (done) {
     var requestData = {
       url: 'http://localhost:8088/user/add',
-      headers: { 'Authorization': 'BEARER abc', 'Content-Type': 'application/json' },
+      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
       body: '{"name": "TestUser", "avatar": "https://testavatar.jpeg"}'
     };
     request.post(requestData, function (err, res, body) {

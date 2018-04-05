@@ -7,29 +7,36 @@ var db;
 
 // Production HTTPS setup
 // const https = require('https');
+// const fs = require('fs');
 // const privateKey  = fs.readFileSync('sslcert/privkey.pem', 'utf8');
 // const certificate = fs.readFileSync('sslcert/cert.pem', 'utf8');
 // const credentials = {key: privateKey, cert: certificate};
 
-// Development mode
+// Development HTTP setup
 const http = require('http');
-const MongoClient = require('mongodb').MongoClient;
 
+// node modules
+const MongoClient = require('mongodb').MongoClient;
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-// App-specific modules
+// app modules
+const environment = process.env.UA_ENVIRONMENT || 'default';
+const config = require('./config-' + environment + '.json');
 const userManager = require('./app_modules/users/index.js');
 const articleManager = require('./app_modules/articles/index.js');
 
 // init stats
 var stats = {};
 
-// routes
+// authorization middleware
 app.use(function (req, res, next) {
-  if (req.headers && req.headers['x-app-auth'] !== 'appAccessKey') {
+  if (
+    req.headers &&
+    req.headers['authorization'] &&
+    req.headers['authorization'].split(' ')[1] === process.env.UA_API_KEY) {
     next();
     statsCounter('requests');
     return;
@@ -41,23 +48,24 @@ app.use(function (req, res, next) {
   statsCounter('authFails');
 });
 
+// health-check related routes
 app.get('/', function (req, res) {
   res.send({ date: new Date() });
 });
-
 app.get('/stats', function (req, res) {
   res.send(stats);
 });
 
+// app-modules related routes
 app.use('/user/', userManager);
 app.use('/article/', articleManager);
 
-// database start
+// database and server startup
 (async function () {
   // Connection URL
-  const url = 'mongodb://localhost:27017/userarticles';
+  const url = config.mongodbConnStr;
   // Database Name
-  const dbName = 'userarticles';
+  const dbName = config.mongoDbDatabaseName;
   let client;
 
   try {
@@ -76,8 +84,8 @@ app.use('/article/', articleManager);
     // server = https.createServer(credentials, app);
     // server.listen(443);
     server = http.createServer(app);
-    server.listen(8088);
-    console.log('Starting UserArticles server on HTTP:8088');
+    server.listen(config.serverPort);
+    console.log('Starting UserArticles server on HTTP:' + config.serverPort);
   } catch (err) {
     console.log(err.stack);
   }
@@ -100,10 +108,12 @@ function getTodayStamp () {
   return 'd' + d.getFullYear() + ((d.getMonth() + 1) < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1)) + (d.getDate() < 10 ? '0' + d.getDate() : d.getDate());
 }
 
-/*
-function shutdown () {
-  process.stdout.write('Server shutting down...\n');
+// the admin pressed ctrl + c
+process.on('SIGINT', () => {
+  console.log('\nCaught interrupt signal. Server shutdown...');
   server.close();
-  process.exit(0);
-}
-*/
+  // do anything youneed here to shut down gracefully (log, db clean up, etc)
+  setTimeout(() => {
+    process.exit(0);
+  }, 1000);
+});

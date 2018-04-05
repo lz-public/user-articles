@@ -20,6 +20,7 @@ This is the "User-Articles" server.
 
 * Article module
 * More documentation...
+* Authentication using the API key
 * Add tests for the Users module
 * Add tests for the Articles module
 * Improve server stats and graceful shutdown
@@ -49,16 +50,33 @@ The User API allows the creation of new users, list them and get information abo
 * `avatar`: The URL (https!) of the user's avatar
 
 It returns the newly added user. For example:
-```json
-{"status":"success","name":"Carol","avatar":"https://carols-avatar.gif","_id":"5ac4d8e255b36032d34d3a99"}
+```javascript
+{
+    "status": "success",
+    "name": "Carol",
+    "avatar": "https://carols-avatar.gif",
+    "_id": "5ac4d8e255b36032d34d3a99"
+}
 ```
 
 
 #### /user/getAll `[GET]`
 > List all users. Doesn't require any parameters
 Example
-```json
-[{"_id":"5ac4d2865940502cfa0fbb03","name":"Maria","avatar":"https://something.gif"},{"_id":"5ac4d2915940502cfa0fbb04","name":"Carlos","avatar":"https://else.gif"},{"_id":"5ac4d8e255b36032d34d3a99","name":"Carol","avatar":"https://carols-avatar.gif"}]
+```javascript
+[{
+    "_id": "5ac4d2865940502cfa0fbb03",
+    "name": "Maria",
+    "avatar": "https://something.gif"
+}, {
+    "_id": "5ac4d2915940502cfa0fbb04",
+    "name": "Carlos",
+    "avatar": "https://else.gif"
+}, {
+    "_id": "5ac4d8e255b36032d34d3a99",
+    "name": "Carol",
+    "avatar": "https://carols-avatar.gif"
+}]
 ```
 
 #### /user/get/:id `[GET]`
@@ -66,6 +84,10 @@ Example
 * `usedId`: The 24 hex id of the user
 
 It returns the user information. For example:
-```json
-{"name":"Carol","avatar":"https://carols-avatar.gif","_id":"5ac4d8e255b36032d34d3a99"}
+```javascript
+{
+    "name": "Carol",
+    "avatar": "https://carols-avatar.gif",
+    "_id": "5ac4d8e255b36032d34d3a99"
+}
 ```

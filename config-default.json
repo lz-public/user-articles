@@ -1,0 +1,7 @@
+{
+  "serverPort": "8088",
+  "mongodbConnStr": "mongodb://localhost:27017/userarticles",
+  "mongoDbDatabaseName": "userarticles",
+  "articlesMaxResultsPerPage": 50,
+  "articlesMaxUserCacheExpiration": 30000
+}
