@@ -48,6 +48,7 @@ git clone https://github.com/lz-public/user-articles.git
 cd user-articles
 npm install
 ```
+* Don't forget to start MongoDb daemon
 * Now create the API key that will be used to authenticate the requests (It can be whatever you want). Then, start the server.
 ```sh
 export UA_API_KEY=079ffec7dd3b4e03bff515ef62925aeb
