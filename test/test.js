@@ -106,12 +106,12 @@ describe('user API', function () {
   });
 });
 
-describe.skip('articles API', function () {
+describe('articles API', function () {
   it('can add an article', function (done) {
     var requestData = {
       url: baseUri + '/article/add',
       headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
-      body: '{"title": "TestArticle#1", "text": "Sed ut perspiciatis unde omnis iste natus", "userId": ' + testUser._id + ', "tags": ["tag1", "tag2"] }'
+      body: '{"title": "TestArticle#1", "text": "Sed ut perspiciatis unde omnis iste natus", "userId": "' + testUser._id + '", "tags": ["tag1", "tag2"] }'
     };
     request.post(requestData, function (err, res, body) {
       if (err) done(err);
@@ -129,38 +129,68 @@ describe.skip('articles API', function () {
   it('can get the complete the article', function (done) {
     var requestData = {
       url: baseUri + '/article/get/tag1',
-      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
-      body: '{}'
+      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' }
     };
     request.get(requestData, function (err, res, body) {
       if (err) done(err);
       var articleList = JSON.parse(res.body);
-      expect(articleList).to.have.property('searchCriteria', ['tag1']);
+      expect(articleList).to.have.property('searchCriteria');
+      expect(articleList.searchCriteria[0]).to.be.equal('tag1');
       expect(articleList.articles[0]).to.have.property('_id', testArticle._id);
       expect(articleList.articles[0]).to.have.property('userId', testUser._id);
       expect(articleList.articles[0]).to.have.property('title', 'TestArticle#1');
-      expect(articleList.stats).to.have.property('results', '1');
-      expect(articleList.stats).to.have.property('cacheHits', '0');
-      expect(articleList.stats).to.have.property('cacheMiss', '1');
+      expect(articleList.stats).to.have.property('results', 1);
+      expect(articleList.stats).to.have.property('cacheHits', 0);
+      expect(articleList.stats).to.have.property('cacheMiss', 1);
       done();
     });
   });
 
-  it('can update the article', function (done) {
+  it('fails to update the article with an incrrect articleId', function (done) {
     var requestData = {
       url: baseUri + '/article/update',
       headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
-      body: '{"articleId": "' + testArticle._id + '", title": "TestArticleEdited", "text": "Ut enim ad minima veniam", "userId": ' + testUser._id + ', "tags": ["aaa", "bbb"] }'
+      body: '{"articleId": "' + testUser._id + '", "title": "TestArticleEdited", "text": "Ut enim ad minima veniam", "userId": "' + testUser._id + '", "tags": ["aaa", "bbb"] }'
     };
-    request.post(requestData, function (err, res, body) {
+    request.put(requestData, function (err, res, body) {
+      if (err) done(err);
+      var resultvars = JSON.parse(res.body);
+      expect(resultvars).to.have.property('status', 'error');
+      done();
+    });
+  });
+
+  it('fails to update the article with an incrrect userId', function (done) {
+    var requestData = {
+      url: baseUri + '/article/update',
+      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
+      body: '{"articleId": "' + testArticle._id + '", "title": "TestArticleEdited", "text": "Ut enim ad minima veniam", "userId": "' + testArticle._id + '", "tags": ["aaa", "bbb"] }'
+    };
+    request.put(requestData, function (err, res, body) {
+      if (err) done(err);
+      var resultvars = JSON.parse(res.body);
+      expect(resultvars).to.have.property('status', 'error');
+      done();
+    });
+  });
+
+  it('can update the article ', function (done) {
+    var requestData = {
+      url: baseUri + '/article/update',
+      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
+      body: '{"articleId": "' + testArticle._id + '", "title": "TestArticleEdited", "text": "Ut enim ad minima veniam", "userId": "' + testUser._id + '", "tags": ["aaa", "bbb"] }'
+    };
+    request.put(requestData, function (err, res, body) {
       if (err) done(err);
       var resultvars = JSON.parse(res.body);
       expect(resultvars).to.have.property('title', 'TestArticleEdited');
       expect(resultvars).to.have.property('text', 'Ut enim ad minima veniam');
       expect(resultvars).to.have.property('userId', testUser._id);
       expect(resultvars).to.have.property('tags');
-      testArticle = resultvars;
-      testArticle._id = testArticle._id.toString();
+      testArticle.title = resultvars.title;
+      testArticle.text = resultvars.text;
+      testArticle.tags[0] = resultvars.tags[0];
+      testArticle.tags[1] = resultvars.tags[1];
       done();
     });
   });
@@ -168,8 +198,7 @@ describe.skip('articles API', function () {
   it('can see changes in the article', function (done) {
     var requestData = {
       url: baseUri + '/article/get/bbb,aaa',
-      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' },
-      body: '{}'
+      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' }
     };
     request.get(requestData, function (err, res, body) {
       if (err) done(err);
@@ -178,10 +207,28 @@ describe.skip('articles API', function () {
       expect(articleList.articles[0]).to.have.property('userId', testUser._id);
       expect(articleList.articles[0]).to.have.property('title', 'TestArticleEdited');
       expect(articleList.articles[0]).to.have.property('text', 'Ut enim ad minima veniam');
-      expect(articleList.stats).to.have.property('results', '2');
-      expect(articleList.stats).to.have.property('cacheHits', '1');
-      expect(articleList.stats).to.have.property('cacheMiss', '0');
+      expect(articleList.stats).to.have.property('results', 1);
+      expect(articleList.stats).to.have.property('cacheHits', 1);
+      expect(articleList.stats).to.have.property('cacheMiss', 0);
       done();
     });
   });
+
+  it('the user cache expires after 3 seconds', function (done) {
+    var requestData = {
+      url: baseUri + '/article/get/bbb,aaa',
+      headers: { 'Authorization': 'BEARER ' + apiKey, 'Content-Type': 'application/json' }
+    };
+    setTimeout(function () {
+      request.get(requestData, function (err, res, body) {
+        if (err) done(err);
+        // expect('').to.be.equal(res.body);
+        var articleList = JSON.parse(res.body);
+        expect(articleList.stats).to.have.property('results', 1);
+        expect(articleList.stats).to.have.property('cacheHits', 0);
+        expect(articleList.stats).to.have.property('cacheMiss', 1);
+        done();
+      });
+    }, 5000);
+  }).timeout(10000);
 });

@@ -43,13 +43,13 @@ const articleHandlers = {
       return;
     }
 
-    articles.db.collection('articles').findOne({ _id: new ObjectID(req.body.articleId) }, (err, articleData) => {
+    articles.db.collection('articles').findOne({ _id: new ObjectID(req.body.articleId), userId: req.body.userId }, (err, articleData) => {
       if (err) {
         next(err);
         return;
       }
       if (!articleData || articleData.length === 0) {
-        res.send(JSON.stringify({ 'status': 'error', 'errorDescription': 'Unable to find article with id ' + req.body.articleId }));
+        res.send(JSON.stringify({ 'status': 'error', 'errorDescription': 'Unable to find article with id ' + req.body.articleId + ' and belongs to userId ' + req.body.userId }));
         return;
       }
 

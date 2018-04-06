@@ -7,7 +7,7 @@ You can create users (currently, you can't make changes to them). However, you c
 
 ## Roadmap
 
-### Done
+### Steps
 1. Project setup (npm, git, express, etc)
 2. HTTP Server creation
 3. Basic health check
@@ -15,27 +15,32 @@ You can create users (currently, you can't make changes to them). However, you c
 5. Basic test with Mocha
 6. Basic Documentation
 7. MongoDB
-8. User module
+8. User module w/tests
 9. Article module
 10. User info expansion and cache for the Article module
 11. Authentication using the API key
 12. Improve server stats and graceful shutdown
 13. Environment dependant config
 14. Improved tests (refactor w/separate db)
+15. Add tests for the Articles module
+16. Validate installation steps in a new VM
 
-### Pending - Next steps
 
-* Add tests for the Articles module - debugging
+### Future (possible) improvements
 
-### Future improvements
-
-* Use Redis/PubSub to share cache between running instances (in a scaled environment)
-* Add caching and invalidate the cached records when changes are detected
-* Improve server internal stats and logging locally or to external resources
 * Real-world operations like editing/deleting users, to be able to change a small number of properties when updating an article, etc.
 * Increase security by adding tools such as limiters and slowloris
+* Add caching and invalidate the cached records when changes are detected
+* Use Redis/PubSub to share cache between running instances (in a scaled environment)
+* Improve server internal stats and logging locally or to external resources
+* Implement socket.io to provide real-time stats
 
-## Build, install and run!
+## Requirements
+* Node.js version 8+
+* MongoDb version 3.6
+
+
+## Install, build and run!
 
 * Install the server
 ```sh
@@ -45,7 +50,7 @@ npm install
 ```
 * Now create the API key that will be used to authenticate the requests (It can be whatever you want). Then, start the server.
 ```sh
-export UA_API_KEY = 079ffec7dd3b4e03bff515ef62925aeb
+export UA_API_KEY=079ffec7dd3b4e03bff515ef62925aeb
 node index
 ```
 * Testing the server
@@ -72,6 +77,13 @@ and is named `config-*environment*.json` . The options are:
   "articlesMaxUserCacheExpiration": 30000   ---> User's cache TTL
 }
 ```
+
+> The test configuration uses a cache timeout of 3 seconds in order to test the user cache expiration faster. The overall test process should take about 5 seconds.
+
+## Known issues
+* Under certain circumstances, when running the tests many times, the port is not released (Linux/Ubuntu) causing the tests to fail.
+* Unexpected authentication/test issues if the environment variable `UA_API_KEY` is not set.
+* Tests might fail if MongoDb or the server takes too much time to start. Retry executing `npm test` and everything should work.
 
 ## Stop the server
 Press `Ctrl` + `C` to stop the server.
