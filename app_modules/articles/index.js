@@ -105,12 +105,7 @@ const articleHandlers = {
     // build a complete search condition
     // the shortcut { tags: tag } can't find documents if arrays don't match exactly
     if (tags.length > 1) {
-      tags.forEach((tag) => {
-        if (!searchCondition['$or']) {
-          searchCondition['$or'] = [];
-        }
-        searchCondition['$or'].push({ tags: tag });
-      });
+      searchCondition.tags = { '$in': tags };
     } else {
       searchCondition.tags = tags[0];
     }
