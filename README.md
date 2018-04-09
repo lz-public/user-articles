@@ -2,7 +2,7 @@
 
 This serivice provides support for mobile apps, managing users and articles exposing a REST API.
 
-You can create users (currently, you can't make changes to them). However, you can add, update, delete and query articles. The service has been designed to be configured for different environments and has some catching logic in the article query. There is a lot we could do to improve this server. The section "Future improvements" is a small list of how it can be extend.
+You can create users (currently, you can't make changes to them). However, you can add, update, delete and query articles. The service has been designed to be configured for different environments and has some catching logic in the article query. There is a lot we could do to improve this server. The section "Future improvements" is a small list of how it can be extended.
 
 
 ## Roadmap
@@ -28,7 +28,7 @@ You can create users (currently, you can't make changes to them). However, you c
 
 ### Future (possible) improvements
 
-* Real-world operations like editing/deleting users, to be able to change a small number of properties when updating an article, etc.
+* Real-world operations like editing/deleting users, to be able to change a small number of properties when updating an article, session management, etc.
 * Increase security by adding tools such as limiters and slowloris
 * Add caching and invalidate the cached records when changes are detected
 * Use Redis/PubSub to share cache between running instances (in a scaled environment)
